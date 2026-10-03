@@ -1,0 +1,274 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>K1716 Outpost Rotation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: single centered working column — lookup form, verdict card with rotation track, then the full outpost register */
+:root{
+  --bg:#eef0ec; --surface:#fbfcf9; --ink:#1d2420; --muted:#5d6862; --line:#d3d8d1;
+  --accent:#2f6b4f; --accent-soft:#dcebe2; --next:#b5651d; --next-soft:#f6e6d6;
+  --warn:#9a3b2c; --warn-soft:#f5e1dc;
+  --display:"Cinzel",Georgia,serif; --body:"Barlow",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#151a17; --surface:#1e2521; --ink:#e6ebe6; --muted:#9aa69f; --line:#333d37;
+  --accent:#7cc39d; --accent-soft:#24392d; --next:#f0a861; --next-soft:#3c2c1d;
+  --warn:#f09a88; --warn-soft:#3d2420; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151a17; --surface:#1e2521; --ink:#e6ebe6; --muted:#9aa69f; --line:#333d37;
+  --accent:#7cc39d; --accent-soft:#24392d; --next:#f0a861; --next-soft:#3c2c1d;
+  --warn:#f09a88; --warn-soft:#3d2420; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:760px;margin:0 auto;padding:32px 16px 64px;display:flex;flex-direction:column;gap:24px}
+header h1{font-family:var(--display);font-size:clamp(26px,5vw,34px);margin:0;letter-spacing:.02em;text-wrap:balance}
+header p{margin:4px 0 0;color:var(--muted)}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+form{display:grid;grid-template-columns:1fr 1fr 2fr;gap:12px;align-items:end}
+@media (max-width:560px){form{grid-template-columns:1fr 1fr}.holder-field{grid-column:1/-1}}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+input{font:500 18px var(--mono);padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);width:100%;min-width:0}
+input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+#holder{font-family:var(--body);font-weight:600}
+.hint{font-size:13px;color:var(--muted);margin:-12px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.card h2{font-family:var(--display);font-size:22px;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:8px;font-size:14px;color:var(--muted)}
+.meta span{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+.verdict{border-radius:8px;padding:14px 16px;background:var(--next-soft);border-left:4px solid var(--next)}
+.verdict .lbl{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--next)}
+.verdict .big{font-family:var(--display);font-size:30px;font-weight:700;line-height:1.2}
+.verdict.open{background:var(--accent-soft);border-left-color:var(--accent)}
+.verdict.open .lbl{color:var(--accent)}
+.verdict.err{background:var(--warn-soft);border-left-color:var(--warn)}
+.verdict.err .lbl{color:var(--warn)}
+.verdict p{margin:4px 0 0;font-size:15px}
+.track{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slot{font:600 15px var(--body);padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.slot:hover{border-color:var(--accent)}
+.slot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.slot.cur{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.slot.nxt{background:var(--next-soft);border-color:var(--next);color:var(--ink)}
+.arrow{color:var(--muted);font-size:14px}
+.loop{font-size:13px;color:var(--muted)}
+.small{font-size:13px;color:var(--muted);margin:0}
+.near{display:flex;flex-wrap:wrap;gap:8px}
+.reg h3{font-family:var(--display);font-size:18px;margin:0 0 8px}
+.reg input{font:500 15px var(--body);margin-bottom:8px}
+.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th{text-align:left;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--accent-soft)}
+tbody tr.sel{background:var(--accent-soft)}
+td.c{font-family:var(--mono);white-space:nowrap}
+td.empty{color:var(--muted);font-style:italic}
+@media (prefers-reduced-motion:no-preference){.verdict{transition:background .2s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Kingdom 1716</div>
+    <h1>Outpost Rotation</h1>
+    <p>Enter an outpost's coordinates and who holds it now to see which alliance takes it next.</p>
+  </header>
+
+  <form id="f" autocomplete="off">
+    <label>X<input id="x" inputmode="numeric" placeholder="537"></label>
+    <label>Y<input id="y" inputmode="numeric" placeholder="138"></label>
+    <label class="holder-field">Current holder<input id="holder" list="holders" placeholder="e.g. GOT"></label>
+    <datalist id="holders"></datalist>
+  </form>
+  <p class="hint">Tip: you can paste coordinates like "X537, Y138" into the X box.</p>
+
+  <section class="card" id="out" aria-live="polite"></section>
+
+  <section class="reg">
+    <h3>All outposts</h3>
+    <input id="filter" placeholder="Filter by name, alliance or coordinate">
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>Outpost</th><th>Lv</th><th>Coords</th><th>Bonus</th><th>Rotation</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+const RAW = [
+["Builder's Guild",1,1068,138,"Construction Speed","+5%",""],
+["Builder's Guild",1,537,138,"Construction Speed","+5%","GOT, ACE"],
+["Builder's Guild",1,138,138,"Construction Speed","+5%","EAV-TRU"],
+["Builder's Guild",1,138,666,"Construction Speed","+5%","(kng/JOT)"],
+["Builder's Guild",1,138,1038,"Construction Speed","+5%",""],
+["Builder's Guild",1,666,1068,"Construction Speed","+5%","KNG"],
+["Builder's Guild",1,1068,567,"Construction Speed","+5%","WLS"],
+["Builder's Guild",1,1068,1068,"Construction Speed","+5%","HxH"],
+["Builder's Guild",3,486,327,"Construction Speed","+8%","GOT, ACE, Eav"],
+["Builder's Guild",3,768,867,"Construction Speed","+8%","KNG"],
+["Builder's Guild",3,867,567,"Construction Speed","+8%","WLS"],
+["Builder's Guild",3,327,666,"Construction Speed","+8%","HxH"],
+["Scholar's Tower",1,957,237,"Research Speed","+5%","kng GOT"],
+["Scholar's Tower",1,666,267,"Research Speed","+5%","GOT, ACE"],
+["Scholar's Tower",1,237,237,"Research Speed","+5%","EAV-TRU"],
+["Scholar's Tower",1,267,537,"Research Speed","+5%","HxH"],
+["Scholar's Tower",1,237,957,"Research Speed","+5%",""],
+["Scholar's Tower",1,537,936,"Research Speed","+5%","KNG"],
+["Scholar's Tower",1,936,537,"Research Speed","+5%",""],
+["Scholar's Tower",1,957,957,"Research Speed","+5%","WLS"],
+["Scholar's Tower",3,867,327,"Research Speed","+8%","ACE"],
+["Scholar's Tower",3,327,327,"Research Speed","+8%","GOT-TRU-Eav"],
+["Scholar's Tower",3,327,867,"Research Speed","+8%","(Kng/HxH)"],
+["Scholar's Tower",3,867,867,"Research Speed","+8%","KNG"],
+["Drill Camp",2,237,486,"Training Speed","+5%","TRU-EAV"],
+["Drill Camp",2,138,747,"Training Speed","+5%",""],
+["Drill Camp",2,486,957,"Training Speed","+5%","KNG"],
+["Drill Camp",2,768,1038,"Training Speed","+5%","HxH"],
+["Drill Camp",2,957,747,"Training Speed","+5%","WLS, GOT"],
+["Drill Camp",2,1068,486,"Training Speed","+5%","WLS, ICH"],
+["Drill Camp",2,486,138,"Training Speed","+5%","GOT, Eav"],
+["Drill Camp",2,768,237,"Training Speed","+5%","(kng/JOT) GOT, ACE, wls"],
+["Harvest Altar",1,1068,237,"Resource Production","+5%","GOT-ICH"],
+["Harvest Altar",1,768,138,"Resource Production","+5%","ACE"],
+["Harvest Altar",1,237,138,"Resource Production","+5%","EAV"],
+["Harvest Altar",1,138,327,"Resource Production","+5%",""],
+["Harvest Altar",1,138,957,"Resource Production","+5%",""],
+["Harvest Altar",1,327,1038,"Resource Production","+5%","kng"],
+["Harvest Altar",1,1068,747,"Resource Production","+5%","WLS"],
+["Harvest Altar",1,957,1068,"Resource Production","+5%","HxH"],
+["Forager Grove",1,957,138,"Gathering Speed","+5%","GOT"],
+["Forager Grove",1,537,87,"Gathering Speed","+5%","ACE"],
+["Forager Grove",1,138,237,"Gathering Speed","+5%",""],
+["Forager Grove",1,87,666,"Gathering Speed","+5%","HxH"],
+["Forager Grove",1,267,1068,"Gathering Speed","+5%","kng"],
+["Forager Grove",1,636,1137,"Gathering Speed","+5%","KNG"],
+["Forager Grove",1,1137,567,"Gathering Speed","+5%",""],
+["Forager Grove",1,1068,936,"Gathering Speed","+5%","WLS"],
+["Frontier Lodge",3,768,327,"Squads March Speed","+15%","GOT, ACE"],
+["Frontier Lodge",3,327,567,"Squads March Speed","+15%","HXH,EAV,TRU "],
+["Frontier Lodge",3,486,867,"Squads March Speed","+15%","KNG"],
+["Frontier Lodge",3,867,666,"Squads March Speed","+15%","WLS, GOT, ICH"],
+["Arsenal",2,867,138,"Attack","+5%","GOT, ACE"],
+["Arsenal",2,366,138,"Attack","+5%","EAV , TRU "],
+["Arsenal",2,138,438,"Attack","+5%",""],
+["Arsenal",2,138,867,"Attack","+5%","kng"],
+["Arsenal",2,438,1068,"Attack","+5%","KNG"],
+["Arsenal",2,1068,327,"Attack","+5%","GOT"],
+["Arsenal",2,1068,867,"Attack","+5%","WLS"],
+["Arsenal",2,867,1068,"Attack","+5%","HxH"],
+["Arsenal",4,816,486,"Attack","+8%","WLS, ACE"],
+["Arsenal",4,387,486,"Attack","+8%","Eav-GOT-HxH"],
+["Arsenal",4,588,867,"Attack","+8%","KNG"],
+["Armory",2,666,138,"Squad Defense","+5%","ACE"],
+["Armory",2,438,267,"Squad Defense","+5%","GOT, Eav"],
+["Armory",2,138,537,"Squad Defense","+5%",""],
+["Armory",2,237,768,"Squad Defense","+5%","kng"],
+["Armory",2,537,1038,"Squad Defense","+5%","KNG"],
+["Armory",2,738,957,"Squad Defense","+5%","HxH"],
+["Armory",2,1068,666,"Squad Defense","+5%","WLS, ICH"],
+["Armory",2,957,438,"Squad Defense","+5%","WLS, wls"],
+["Armory",4,816,717,"Squad Defense","+8%",""],
+["Armory",4,387,717,"Squad Defense","+8%","KNG (kng/HxH)"],
+["Armory",4,588,327,"Squad Defense","+8%","Eav-GOT-ACE"]
+];
+
+// Turn the free-text rotation into ordered slots. "(a/b)" is one shared slot.
+function parseRotation(s){
+  const slots=[]; const re=/\(([^)]*)\)|[^\s,\-()]+/g; let m;
+  while((m=re.exec(s||""))){
+    const members=(m[1]!==undefined?m[1]:m[0]).split("/").map(t=>t.trim()).filter(Boolean);
+    if(members.length) slots.push(members);
+  }
+  return slots;
+}
+const OUTPOSTS=RAW.map(([name,lvl,x,y,type,val,rot],i)=>({i,name,lvl,x,y,type,val,rot:rot.trim(),slots:parseRotation(rot)}));
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const slotLabel=s=>s.join(" / ");
+
+function findSlot(slots,h){
+  if(!h) return -1;
+  let i=slots.findIndex(s=>s.includes(h));
+  if(i<0){const l=h.toLowerCase(); i=slots.findIndex(s=>s.some(m=>m.toLowerCase()===l));}
+  return i;
+}
+
+function render(){
+  const raw=$("x").value;
+  const pasted=raw.match(/x\s*(\d+)\D+y\s*(\d+)/i);
+  if(pasted){$("x").value=pasted[1];$("y").value=pasted[2];}
+  const x=parseInt($("x").value,10), y=parseInt($("y").value,10);
+  const holder=$("holder").value.trim();
+  const out=$("out");
+  document.querySelectorAll("#rows tr").forEach(r=>r.classList.remove("sel"));
+
+  if(isNaN(x)||isNaN(y)){
+    out.innerHTML=`<h2>Pick an outpost</h2><p class="small">Type the X and Y coordinates above, or tap a row in the list below.</p>`;
+    $("holders").innerHTML=""; return;
+  }
+  const o=OUTPOSTS.find(p=>p.x===x&&p.y===y);
+  if(!o){
+    const near=[...OUTPOSTS].sort((a,b)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(b.x-x,b.y-y)).slice(0,3);
+    out.innerHTML=`<div class="verdict err"><div class="lbl">Not found</div><div class="big">No outpost at X${x}, Y${y}</div><p>Check the coordinates. Closest outposts:</p></div>
+      <div class="near">${near.map(n=>`<button type="button" class="slot" data-pick="${n.i}">${esc(n.name)} · X${n.x}, Y${n.y}</button>`).join("")}</div>`;
+    $("holders").innerHTML=""; return;
+  }
+  const row=document.querySelector(`#rows tr[data-i="${o.i}"]`); if(row) row.classList.add("sel");
+  $("holders").innerHTML=[...new Set(o.slots.flat())].map(m=>`<option value="${esc(m)}">`).join("");
+
+  const head=`<div><h2>${esc(o.name)}</h2></div>
+    <div class="meta"><span>Level ${o.lvl}</span><span>X${o.x}, Y${o.y}</span><span>${esc(o.type)} ${esc(o.val)}</span></div>`;
+
+  if(!o.slots.length){
+    out.innerHTML=head+`<div class="verdict open"><div class="lbl">Next holder</div><div class="big">No next holder</div><p>This outpost has no rotation set. It could be anyone.</p></div>`;
+    return;
+  }
+  const idx=findSlot(o.slots,holder);
+  let verdict, nextIdx=-1;
+  if(!holder){
+    verdict=`<div class="verdict"><div class="lbl">Enter current holder</div><div class="big">Who holds it now?</div><p>Type the alliance tag, or tap one in the rotation below.</p></div>`;
+  }else if(idx<0){
+    nextIdx=0;
+    verdict=`<div class="verdict err"><div class="lbl">Not on rotation</div><div class="big">${esc(holder)} isn't on this rotation</div><p>The rotation starts with <strong>${esc(slotLabel(o.slots[0]))}</strong>, so they should get it next.</p></div>`;
+  }else if(o.slots.length===1){
+    nextIdx=idx;
+    verdict=`<div class="verdict"><div class="lbl">Next holder</div><div class="big">${esc(slotLabel(o.slots[0]))}</div><p>Only one slot on this rotation, so ${esc(slotLabel(o.slots[0]))} keeps it.</p></div>`;
+  }else{
+    nextIdx=(idx+1)%o.slots.length;
+    const wrap=nextIdx===0?` That's the end of the list, so it loops back to the start.`:"";
+    const shared=o.slots[nextIdx].length>1?` This slot is shared, so either alliance can take it.`:"";
+    verdict=`<div class="verdict"><div class="lbl">Next holder</div><div class="big">${esc(slotLabel(o.slots[nextIdx]))}</div><p>After ${esc(holder)}.${wrap}${shared}</p></div>`;
+  }
+  const track=o.slots.map((s,i)=>`<button type="button" class="slot${i===idx?" cur":""}${i===nextIdx&&i!==idx?" nxt":""}" data-holder="${esc(s[0])}" title="Set ${esc(s[0])} as current holder">${esc(slotLabel(s))}</button>`).join(`<span class="arrow">→</span>`);
+  out.innerHTML=head+verdict+`<div><div class="track">${track}<span class="loop">↺ repeats</span></div></div>
+    <p class="small">Rotation as written in the sheet: "${esc(o.rot)}"</p>`;
+}
+
+function renderTable(){
+  const q=$("filter").value.trim().toLowerCase();
+  $("rows").innerHTML=OUTPOSTS.filter(o=>!q||`${o.name} ${o.rot} x${o.x} y${o.y} ${o.x},${o.y} ${o.type}`.toLowerCase().includes(q))
+    .map(o=>`<tr data-i="${o.i}" tabindex="0"><td>${esc(o.name)}</td><td>${o.lvl}</td><td class="c">${o.x}, ${o.y}</td><td>${esc(o.val)} ${esc(o.type)}</td>${o.slots.length?`<td>${o.slots.map(slotLabel).map(esc).join(" → ")}</td>`:`<td class="empty">none</td>`}</tr>`).join("");
+  render();
+}
+
+function pick(i){const o=OUTPOSTS[i];$("x").value=o.x;$("y").value=o.y;$("holder").value="";render();$("holder").focus();}
+
+$("f").addEventListener("submit",e=>e.preventDefault());
+["x","y","holder"].forEach(id=>$(id).addEventListener("input",render));
+$("filter").addEventListener("input",renderTable);
+$("rows").addEventListener("click",e=>{const r=e.target.closest("tr");if(r)pick(+r.dataset.i);});
+$("rows").addEventListener("keydown",e=>{if(e.key==="Enter"){const r=e.target.closest("tr");if(r)pick(+r.dataset.i);}});
+$("out").addEventListener("click",e=>{
+  const b=e.target.closest("[data-holder],[data-pick]"); if(!b) return;
+  if(b.dataset.pick!==undefined) pick(+b.dataset.pick); else {$("holder").value=b.dataset.holder;render();}
+});
+
+// Example to show how it works
+$("x").value=486;$("y").value=327;$("holder").value="ACE";
+renderTable();
+</script>
+
+</body></html>
