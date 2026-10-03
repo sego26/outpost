@@ -240,6 +240,12 @@ function render(){
       <p class="small">As written in the sheet: "${esc(o.rot)}" (* = contested)</p>`;
     return;
   }
+  if(o.slots.length===1){
+    const s=o.slots[0], who=slotLabel(s);
+    out.innerHTML=head+`<div class="verdict"><div class="lbl">Reserved</div><div class="big">Only for ${esc(who)}</div><p>${s.length>1?"These alliances share this outpost. There's no rotation.":"No rotation. This outpost belongs to "+esc(who)+"."}</p></div>
+      <p class="small">As written in the sheet: "${esc(o.rot)}"</p>`;
+    return;
+  }
   const idx=findSlot(o.slots,holder);
   let verdict, nextIdx=-1;
   if(!holder){
@@ -264,7 +270,7 @@ function render(){
 function renderTable(){
   const q=$("filter").value.trim().toLowerCase();
   $("rows").innerHTML=OUTPOSTS.filter(o=>!q||`${o.name} ${o.rot} x${o.x} y${o.y} ${o.x},${o.y} ${o.type}`.toLowerCase().includes(q))
-    .map(o=>`<tr data-i="${o.i}" tabindex="0"><td>${esc(o.name)}</td><td>${o.lvl}</td><td class="c">${o.x}, ${o.y}</td><td>${esc(o.val)} ${esc(o.type)}</td>${!o.slots.length?`<td class="empty">none</td>`:o.contested?`<td><span class="tag">Contested</span> ${o.slots.map(slotLabel).map(esc).join(" · ")}</td>`:`<td>${o.slots.map(slotLabel).map(esc).join(" → ")}</td>`}</tr>`).join("");
+    .map(o=>`<tr data-i="${o.i}" tabindex="0"><td>${esc(o.name)}</td><td>${o.lvl}</td><td class="c">${o.x}, ${o.y}</td><td>${esc(o.val)} ${esc(o.type)}</td>${!o.slots.length?`<td class="empty">none</td>`:o.contested?`<td><span class="tag">Contested</span> ${o.slots.map(slotLabel).map(esc).join(" · ")}</td>`:o.slots.length===1?`<td>Only ${esc(slotLabel(o.slots[0]))}</td>`:o.contested?`<td><span class="tag">Contested</span> ${o.slots.map(slotLabel).map(esc).join(" · ")}</td>`:`<td>${o.slots.map(slotLabel).map(esc).join(" → ")}</td>`}</tr>`).join("");
   render();
 }
 
