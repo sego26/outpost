@@ -1,9 +1,9 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset="utf8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>K1716 Outpost Rotation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&amp;family=Barlow:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap">
 <style>
-/* Layout: single centered working column — lookup form, verdict card with rotation track, then the full outpost register */
+/* Layout: single centered working column — lookup form, verdict card with rotation track, outpost register, then data tools */
 :root{
   --bg:#eef0ec; --surface:#fbfcf9; --ink:#1d2420; --muted:#5d6862; --line:#d3d8d1;
   --accent:#2f6b4f; --accent-soft:#dcebe2; --next:#b5651d; --next-soft:#f6e6d6;
@@ -27,16 +27,18 @@ header p{margin:4px 0 0;color:var(--muted)}
 form{display:grid;grid-template-columns:1fr 1fr 2fr;gap:12px;align-items:end}
 @media (max-width:560px){form{grid-template-columns:1fr 1fr}.holder-field{grid-column:1/-1}}
 label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
-input{font:500 18px var(--mono);padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);width:100%;min-width:0}
-input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+input,textarea{font:500 18px var(--mono);padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);width:100%;min-width:0}
+input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+textarea{font:500 13px var(--mono);resize:vertical;text-transform:none;letter-spacing:0}
 #holder{font-family:var(--body);font-weight:600}
 .hint{font-size:13px;color:var(--muted);margin:-12px 0 0}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:16px}
 .card h2{font-family:var(--display);font-size:22px;margin:0}
+.cardhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
 .meta{display:flex;flex-wrap:wrap;gap:8px;font-size:14px;color:var(--muted)}
 .meta span{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
 .verdict{border-radius:8px;padding:14px 16px;background:var(--next-soft);border-left:4px solid var(--next)}
-.verdict .lbl{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--next)}
+.verdict .lbl,.editor .lbl{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--next)}
 .verdict .big{font-family:var(--display);font-size:30px;font-weight:700;line-height:1.2}
 .verdict.open{background:var(--accent-soft);border-left-color:var(--accent)}
 .verdict.open .lbl{color:var(--accent)}
@@ -46,18 +48,20 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(
 .verdict.contested .lbl{color:var(--warn)}
 .slot.contest{cursor:default;border-color:var(--warn)}
 .tag{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);background:var(--warn-soft);border-radius:999px;padding:1px 8px;margin-right:4px}
+.tag.ed{color:var(--accent);background:var(--accent-soft)}
 .verdict p{margin:4px 0 0;font-size:15px}
 .track{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .slot{font:600 15px var(--body);padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
 .slot:hover{border-color:var(--accent)}
-.slot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.slot:focus-visible,.btn:focus-visible,.ib:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .slot.cur{background:var(--accent);border-color:var(--accent);color:var(--surface)}
 .slot.nxt{background:var(--next-soft);border-color:var(--next);color:var(--ink)}
 .arrow{color:var(--muted);font-size:14px}
 .loop{font-size:13px;color:var(--muted)}
 .small{font-size:13px;color:var(--muted);margin:0}
 .near{display:flex;flex-wrap:wrap;gap:8px}
-.reg h3{font-family:var(--display);font-size:18px;margin:0 0 8px}
+.reg h3,.card h3{font-family:var(--display);font-size:18px;margin:0}
+.reg h3{margin-bottom:8px}
 .reg input{font:500 15px var(--body);margin-bottom:8px}
 .tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
@@ -69,6 +73,30 @@ tbody tr:hover{background:var(--accent-soft)}
 tbody tr.sel{background:var(--accent-soft)}
 td.c{font-family:var(--mono);white-space:nowrap}
 td.empty{color:var(--muted);font-style:italic}
+/* buttons + editor */
+.btn{font:600 14px var(--body);padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn.danger{color:var(--warn)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.editor{border:1px dashed var(--accent);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.editor .lbl{color:var(--accent)}
+.ed-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ed-list li{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 6px 4px 10px}
+.ed-list .n{font:500 13px var(--mono);color:var(--muted);min-width:1.6em}
+.ed-list .t{flex:1;font-weight:600;min-width:0;overflow-wrap:anywhere}
+.ed-empty{font-size:14px;color:var(--muted);font-style:italic}
+.ib{font:600 15px var(--body);width:34px;height:34px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:inline-grid;place-items:center;padding:0}
+.ib:hover{border-color:var(--accent)}
+.ib:disabled{opacity:.35;cursor:default}
+.ib.x{color:var(--warn)}
+.editor input.txt{font:500 15px var(--body);padding:8px 10px}
+.ed-add{display:flex;gap:8px}
+.ed-add input{flex:1}
+label.chk{flex-direction:row;align-items:center;text-transform:none;letter-spacing:0;font-size:15px;color:var(--ink);font-weight:500;gap:8px;cursor:pointer}
+input[type=checkbox]{width:18px;height:18px;padding:0;accent-color:var(--accent);margin:0}
+.msg{font-size:14px;color:var(--accent);font-weight:600}
+.msg.bad{color:var(--warn)}
 @media (prefers-reduced-motion:no-preference){.verdict{transition:background .2s}}
 </style>
 
@@ -99,15 +127,32 @@ td.empty{color:var(--muted);font-style:italic}
       </table>
     </div>
   </section>
+
+  <section class="card" id="data">
+    <div>
+      <h3>Update data</h3>
+      <p class="small" id="dstatus"></p>
+    </div>
+    <div class="row">
+      <button type="button" class="btn" id="copy">Copy data</button>
+      <button type="button" class="btn" id="dl">Download updated HTML</button>
+      <button type="button" class="btn danger" id="reset">Reset to original</button>
+    </div>
+    <span class="msg" id="cmsg" role="status"></span>
+    <label>Paste new data
+      <textarea id="paste" rows="6" spellcheck="false" placeholder="Paste data copied from this page, or rows straight from the spreadsheet (Name, Lv, X, Y, Bonus, Value, Rotation)"></textarea>
+    </label>
+    <div class="row"><button type="button" class="btn primary" id="load">Load pasted data</button><span class="msg" id="pmsg" role="status"></span></div>
+  </section>
 </div>
 
-<script>
-const RAW = [
+<script id="app">
+const RAW = /*DATA*/[
 ["Builder's Guild", 1, 1068, 138, "Construction Speed", "+5%", ""],
 ["Builder's Guild", 1, 537, 138, "Construction Speed", "+5%", "GOT*, ACE*"],
 ["Builder's Guild", 1, 138, 138, "Construction Speed", "+5%", "EAV-TRU"],
 ["Builder's Guild", 1, 138, 666, "Construction Speed", "+5%", "(kng/JOT)"],
-["Builder's Guild", 1, 138, 1038, "Construction Speed", "+5%", ""],
+["Builder's Guild", 1, 138, 1038, "Construction Speed", "+5%", "gDr"],
 ["Builder's Guild", 1, 666, 1068, "Construction Speed", "+5%", "KNG"],
 ["Builder's Guild", 1, 1068, 567, "Construction Speed", "+5%", "WLS"],
 ["Builder's Guild", 1, 1068, 1068, "Construction Speed", "+5%", "HxH"],
@@ -177,7 +222,21 @@ const RAW = [
 ["Armory", 4, 816, 717, "Squad Defense", "+8%", ""],
 ["Armory", 4, 387, 717, "Squad Defense", "+8%", "KNG (kng/HxH)"],
 ["Armory", 4, 588, 327, "Squad Defense", "+8%", "Eav-GOT-ACE"]
-];
+]/*END*/;
+
+// ---------- data + persistence ----------
+// Edits are kept in this browser. If the file's built-in data changes (new HTML), the saved edits are dropped.
+const KEY="k1716-outpost-data", SIG=JSON.stringify(RAW);
+function loadSaved(){
+  try{const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.sig===SIG&&Array.isArray(s.rows)&&s.rows.length) return s.rows;}catch(e){}
+  return RAW.map(r=>r.slice());
+}
+function persist(){
+  try{ if(JSON.stringify(DATA)===SIG) localStorage.removeItem(KEY); else localStorage.setItem(KEY,JSON.stringify({sig:SIG,rows:DATA})); }catch(e){}
+}
+let DATA=loadSaved();
+let OUTPOSTS=[];
+const ORIG=new Map(RAW.map(r=>[r[2]+","+r[3],r[6].trim()]));
 
 // Turn the free-text rotation into ordered slots. "(a/b)" is one shared slot.
 function parseRotation(s){
@@ -188,8 +247,19 @@ function parseRotation(s){
   }
   return slots;
 }
-// A "*" after any alliance tag marks the outpost as contested: no rotation.
-const OUTPOSTS=RAW.map(([name,lvl,x,y,type,val,rot],i)=>({i,name,lvl,x,y,type,val,rot:rot.trim(),contested:rot.includes("*"),slots:parseRotation(rot.replace(/\*/g,""))}));
+// Slots back to sheet text. A "*" after every tag marks the outpost as contested.
+function rotString(slots,contested){
+  return slots.map(s=>(s.length>1?"("+s.join("/")+")":s[0])+(contested?"*":"")).join(", ");
+}
+function build(){
+  OUTPOSTS=DATA.map(([name,lvl,x,y,type,val,rot],i)=>{
+    rot=String(rot||"").trim();
+    const orig=ORIG.get(x+","+y);
+    return {i,name,lvl,x,y,type,val,rot,contested:rot.includes("*"),slots:parseRotation(rot.replace(/\*/g,"")),edited:orig!==undefined&&orig!==rot};
+  });
+}
+build();
+
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const slotLabel=s=>s.join(" / ");
@@ -199,6 +269,31 @@ function findSlot(slots,h){
   let i=slots.findIndex(s=>s.includes(h));
   if(i<0){const l=h.toLowerCase(); i=slots.findIndex(s=>s.some(m=>m.toLowerCase()===l));}
   return i;
+}
+
+// ---------- rotation editor state ----------
+let edit=null; // {i, slots, contested}
+
+function editorHTML(){
+  return `<div class="editor">
+    <div class="lbl">Edit rotation order</div>
+    <ol class="ed-list" id="ed-list"></ol>
+    <div class="ed-add"><input class="txt" id="ed-new" placeholder="Add alliance, e.g. GOT or KNG/HxH for a shared slot"><button type="button" class="btn" data-ed="add">Add</button></div>
+    <label class="chk"><input type="checkbox" id="ed-cont"${edit.contested?" checked":""}> Contested (no rotation, whoever wins holds it)</label>
+    <label>As sheet text<input class="txt" id="ed-text" spellcheck="false"></label>
+    <p class="small">Commas or dashes separate turns. Put shared slots in brackets like (KNG/HxH).</p>
+    <div class="row"><button type="button" class="btn primary" data-ed="save">Save rotation</button><button type="button" class="btn" data-ed="cancel">Cancel</button></div>
+  </div>`;
+}
+function renderEditorList(skipText){
+  const n=edit.slots.length;
+  $("ed-list").innerHTML=n?edit.slots.map((s,k)=>`<li><span class="n">${k+1}.</span><span class="t">${esc(slotLabel(s))}</span>
+    <button type="button" class="ib" data-ed="up" data-k="${k}" aria-label="Move ${esc(slotLabel(s))} up"${k===0?" disabled":""}>↑</button>
+    <button type="button" class="ib" data-ed="down" data-k="${k}" aria-label="Move ${esc(slotLabel(s))} down"${k===n-1?" disabled":""}>↓</button>
+    <button type="button" class="ib x" data-ed="del" data-k="${k}" aria-label="Remove ${esc(slotLabel(s))}">✕</button></li>`).join("")
+    :`<li class="ed-empty">No alliances. Saving leaves this outpost open to anyone.</li>`;
+  $("ed-cont").checked=edit.contested;
+  if(!skipText) $("ed-text").value=rotString(edit.slots,false);
 }
 
 function render(){
@@ -211,21 +306,26 @@ function render(){
   document.querySelectorAll("#rows tr").forEach(r=>r.classList.remove("sel"));
 
   if(isNaN(x)||isNaN(y)){
+    edit=null;
     out.innerHTML=`<h2>Pick an outpost</h2><p class="small">Type the X and Y coordinates above, or tap a row in the list below.</p>`;
     $("holders").innerHTML=""; return;
   }
   const o=OUTPOSTS.find(p=>p.x===x&&p.y===y);
   if(!o){
+    edit=null;
     const near=[...OUTPOSTS].sort((a,b)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(b.x-x,b.y-y)).slice(0,3);
     out.innerHTML=`<div class="verdict err"><div class="lbl">Not found</div><div class="big">No outpost at X${x}, Y${y}</div><p>Check the coordinates. Closest outposts:</p></div>
       <div class="near">${near.map(n=>`<button type="button" class="slot" data-pick="${n.i}">${esc(n.name)} · X${n.x}, Y${n.y}</button>`).join("")}</div>`;
     $("holders").innerHTML=""; return;
   }
+  if(edit&&edit.i!==o.i) edit=null;
   const row=document.querySelector(`#rows tr[data-i="${o.i}"]`); if(row) row.classList.add("sel");
   $("holders").innerHTML=[...new Set(o.slots.flat())].map(m=>`<option value="${esc(m)}">`).join("");
 
-  const head=`<div><h2>${esc(o.name)}</h2></div>
-    <div class="meta"><span>Level ${o.lvl}</span><span>X${o.x}, Y${o.y}</span><span>${esc(o.type)} ${esc(o.val)}</span></div>`;
+  const head=`<div class="cardhead"><h2>${esc(o.name)}</h2>${edit?"":`<button type="button" class="btn" data-ed="open">Edit rotation</button>`}</div>
+    <div class="meta"><span>Level ${o.lvl}</span><span>X${o.x}, Y${o.y}</span><span>${esc(o.type)} ${esc(o.val)}</span>${o.edited?`<span class="tag ed">Edited</span>`:""}</div>`;
+
+  if(edit){ out.innerHTML=head+editorHTML(); renderEditorList(); return; }
 
   if(!o.slots.length){
     out.innerHTML=head+`<div class="verdict open"><div class="lbl">Next holder</div><div class="big">No next holder</div><p>This outpost has no rotation set. It could be anyone.</p></div>`;
@@ -235,7 +335,7 @@ function render(){
     const names=o.slots.map(slotLabel);
     const list=names.length>1?names.slice(0,-1).join(", ")+" and "+names[names.length-1]:names[0];
     const chips=o.slots.map(s=>`<span class="slot contest">${esc(slotLabel(s))}</span>`).join("");
-    out.innerHTML=head+`<div class="verdict contested"><div class="lbl">Contested</div><div class="big">No rotation</div><p>${list} are contesting this outpost. Whoever wins it holds it${holder?`, not automatically the next one after ${esc(holder)}`:""}.</p></div>
+    out.innerHTML=head+`<div class="verdict contested"><div class="lbl">Contested</div><div class="big">No rotation</div><p>${esc(list)} ${names.length>1?"are":"is"} contesting this outpost. Whoever wins it holds it${holder?`, not automatically the next one after ${esc(holder)}`:""}.</p></div>
       <div class="track">${chips}</div>
       <p class="small">As written in the sheet: "${esc(o.rot)}" (* = contested)</p>`;
     return;
@@ -253,9 +353,6 @@ function render(){
   }else if(idx<0){
     nextIdx=0;
     verdict=`<div class="verdict err"><div class="lbl">Not on rotation</div><div class="big">${esc(holder)} isn't on this rotation</div><p>The rotation starts with <strong>${esc(slotLabel(o.slots[0]))}</strong>, so they should get it next.</p></div>`;
-  }else if(o.slots.length===1){
-    nextIdx=idx;
-    verdict=`<div class="verdict"><div class="lbl">Next holder</div><div class="big">${esc(slotLabel(o.slots[0]))}</div><p>Only one slot on this rotation, so ${esc(slotLabel(o.slots[0]))} keeps it.</p></div>`;
   }else{
     nextIdx=(idx+1)%o.slots.length;
     const wrap=nextIdx===0?` That's the end of the list, so it loops back to the start.`:"";
@@ -267,28 +364,141 @@ function render(){
     <p class="small">Rotation as written in the sheet: "${esc(o.rot)}"</p>`;
 }
 
+function rotCell(o){
+  const ed=o.edited?`<span class="tag ed">Edited</span> `:"";
+  if(!o.slots.length) return `<td class="empty">${ed}none</td>`;
+  if(o.contested) return `<td>${ed}<span class="tag">Contested</span> ${o.slots.map(slotLabel).map(esc).join(" · ")}</td>`;
+  if(o.slots.length===1) return `<td>${ed}Only ${esc(slotLabel(o.slots[0]))}</td>`;
+  return `<td>${ed}${o.slots.map(slotLabel).map(esc).join(" → ")}</td>`;
+}
 function renderTable(){
   const q=$("filter").value.trim().toLowerCase();
   $("rows").innerHTML=OUTPOSTS.filter(o=>!q||`${o.name} ${o.rot} x${o.x} y${o.y} ${o.x},${o.y} ${o.type}`.toLowerCase().includes(q))
-    .map(o=>`<tr data-i="${o.i}" tabindex="0"><td>${esc(o.name)}</td><td>${o.lvl}</td><td class="c">${o.x}, ${o.y}</td><td>${esc(o.val)} ${esc(o.type)}</td>${!o.slots.length?`<td class="empty">none</td>`:o.contested?`<td><span class="tag">Contested</span> ${o.slots.map(slotLabel).map(esc).join(" · ")}</td>`:o.slots.length===1?`<td>Only ${esc(slotLabel(o.slots[0]))}</td>`:o.contested?`<td><span class="tag">Contested</span> ${o.slots.map(slotLabel).map(esc).join(" · ")}</td>`:`<td>${o.slots.map(slotLabel).map(esc).join(" → ")}</td>`}</tr>`).join("");
+    .map(o=>`<tr data-i="${o.i}" tabindex="0"><td>${esc(o.name)}</td><td>${o.lvl}</td><td class="c">${o.x}, ${o.y}</td><td>${esc(o.val)} ${esc(o.type)}</td>${rotCell(o)}</tr>`).join("");
   render();
+  dataStatus();
 }
 
-function pick(i){const o=OUTPOSTS[i];$("x").value=o.x;$("y").value=o.y;$("holder").value="";render();$("holder").focus();}
+function pick(i){const o=OUTPOSTS[i];edit=null;$("x").value=o.x;$("y").value=o.y;$("holder").value="";render();$("holder").focus();}
 
+// ---------- events: lookup ----------
 $("f").addEventListener("submit",e=>e.preventDefault());
 ["x","y","holder"].forEach(id=>$(id).addEventListener("input",render));
 $("filter").addEventListener("input",renderTable);
 $("rows").addEventListener("click",e=>{const r=e.target.closest("tr");if(r)pick(+r.dataset.i);});
 $("rows").addEventListener("keydown",e=>{if(e.key==="Enter"){const r=e.target.closest("tr");if(r)pick(+r.dataset.i);}});
+
+// ---------- events: card + editor ----------
+function addSlot(){
+  const inp=$("ed-new"); const v=inp.value.trim(); if(!v) return;
+  if(v.includes("*")) edit.contested=true;
+  const s=v.replace(/\*/g,"");
+  // "KNG/HxH" on its own is one shared slot
+  const parsed=parseRotation(s.includes("/")&&!/[(),\-\s]/.test(s)?"("+s+")":s);
+  edit.slots.push(...parsed); inp.value=""; renderEditorList(); inp.focus();
+}
 $("out").addEventListener("click",e=>{
+  const ed=e.target.closest("[data-ed]");
+  if(ed){
+    const a=ed.dataset.ed, k=+ed.dataset.k;
+    const cur=OUTPOSTS.find(p=>p.x===parseInt($("x").value,10)&&p.y===parseInt($("y").value,10));
+    if(a==="open"&&cur){ edit={i:cur.i,slots:cur.slots.map(s=>s.slice()),contested:cur.contested}; render(); $("ed-new").focus(); return; }
+    if(!edit) return;
+    if(a==="up"&&k>0){[edit.slots[k-1],edit.slots[k]]=[edit.slots[k],edit.slots[k-1]];renderEditorList();focusBtn("up",k-1);}
+    else if(a==="down"&&k<edit.slots.length-1){[edit.slots[k+1],edit.slots[k]]=[edit.slots[k],edit.slots[k+1]];renderEditorList();focusBtn("down",k+1);}
+    else if(a==="del"){edit.slots.splice(k,1);renderEditorList();}
+    else if(a==="add") addSlot();
+    else if(a==="cancel"){edit=null;render();}
+    else if(a==="save"){
+      DATA[edit.i][6]=rotString(edit.slots,edit.contested);
+      edit=null; build(); persist(); renderTable();
+    }
+    return;
+  }
   const b=e.target.closest("[data-holder],[data-pick]"); if(!b) return;
   if(b.dataset.pick!==undefined) pick(+b.dataset.pick); else {$("holder").value=b.dataset.holder;render();}
+});
+function focusBtn(a,k){const b=document.querySelector(`#ed-list [data-ed="${a}"][data-k="${k}"]`);(b&&!b.disabled?b:document.querySelector(`#ed-list [data-k="${k}"]`))?.focus();}
+$("out").addEventListener("input",e=>{
+  if(!edit) return;
+  if(e.target.id==="ed-text"){ const v=e.target.value; if(v.includes("*")) edit.contested=true; edit.slots=parseRotation(v.replace(/\*/g,"")); renderEditorList(true); }
+  else if(e.target.id==="ed-cont"){ edit.contested=e.target.checked; }
+});
+$("out").addEventListener("keydown",e=>{ if(edit&&e.target.id==="ed-new"&&e.key==="Enter"){e.preventDefault();addSlot();} });
+
+// ---------- data tools: copy, paste, download, reset ----------
+function serialize(rows){ return "[\n"+rows.map(r=>"["+r.map(v=>JSON.stringify(v)).join(", ")+"]").join(",\n")+"\n]"; }
+function flash(id,text,bad){const m=$(id);m.textContent=text;m.classList.toggle("bad",!!bad);clearTimeout(m._t);m._t=setTimeout(()=>{m.textContent=""},6000);}
+function dataStatus(){
+  const changed=JSON.stringify(DATA)!==SIG;
+  const n=OUTPOSTS.filter(o=>o.edited).length;
+  $("dstatus").textContent=changed
+    ?`Using your updated data (${DATA.length} outposts${n?`, ${n} rotation${n>1?"s":""} changed`:""}), saved in this browser. Copy it or download the updated HTML to share it.`
+    :`Using the data built into this file (${DATA.length} outposts). Edit a rotation above or paste new data below.`;
+  $("reset").hidden=!changed;
+}
+
+$("copy").addEventListener("click",async()=>{
+  const text=serialize(DATA);
+  try{ await navigator.clipboard.writeText(text); flash("cmsg","Copied. Paste it into the box below on any copy of this page, or over the data list in the HTML file."); }
+  catch(e){ const t=$("paste"); t.value=text; t.focus(); t.select(); flash("cmsg","Couldn't reach the clipboard. The data is selected in the box below, press Ctrl+C (or ⌘C) to copy.",true); }
+});
+
+function normRow(r){
+  if(!Array.isArray(r)||r.length<4) return null;
+  const x=parseInt(r[2],10), y=parseInt(r[3],10);
+  if(isNaN(x)||isNaN(y)) return null;
+  return [String(r[0]??"").trim(), parseInt(r[1],10)||0, x, y, String(r[4]??"").trim(), String(r[5]??"").trim(), String(r[6]??"").trim()];
+}
+function parsePasted(t){
+  // Also accept the whole "const RAW = [...]" block copied from the HTML source
+  t=t.trim().replace(/^const\s+RAW\s*=\s*/,"").split("/*"+"DATA*/").join("").split("/*"+"END*/").join("").trim(); if(!t) return null;
+  if(t.startsWith("[")){
+    const clean=t.replace(/,\s*\]/g,"]").replace(/;\s*$/,"");
+    for(const c of [clean,"["+clean.replace(/,\s*$/,"")+"]"]){
+      try{ let a=JSON.parse(c); if(Array.isArray(a)&&!Array.isArray(a[0])) a=[a]; const rows=a.map(normRow).filter(Boolean); if(rows.length) return rows; }catch(e){}
+    }
+    return null;
+  }
+  // Spreadsheet rows: tab-separated, header rows are skipped automatically
+  const rows=t.split(/\r?\n/).map(l=>normRow(l.split("\t"))).filter(Boolean);
+  return rows.length?rows:null;
+}
+$("load").addEventListener("click",()=>{
+  const rows=parsePasted($("paste").value);
+  if(!rows){ flash("pmsg","Couldn't read that. Paste data copied from this page, or spreadsheet rows with X and Y in columns 3 and 4.",true); return; }
+  DATA=rows; edit=null; build(); persist(); $("paste").value="";
+  const x=parseInt($("x").value,10),y=parseInt($("y").value,10);
+  if(!OUTPOSTS.some(p=>p.x===x&&p.y===y)){$("x").value="";$("y").value="";$("holder").value="";}
+  renderTable(); flash("pmsg",`Loaded ${rows.length} outposts.`);
+});
+
+$("dl").addEventListener("click",()=>{
+  const open="/*"+"DATA*/", close="/*"+"END*/";
+  const src=$("app").textContent;
+  const a=src.indexOf(open), b=src.indexOf(close);
+  if(a<0||b<0){ flash("cmsg","Couldn't build the file. Use Copy data instead.",true); return; }
+  const clone=document.documentElement.cloneNode(true);
+  clone.querySelector("#app").textContent=src.slice(0,a+open.length)+serialize(DATA)+src.slice(b);
+  ["out","rows","holders"].forEach(id=>{const n=clone.querySelector("#"+id); if(n) n.innerHTML="";});
+  ["dstatus","cmsg","pmsg"].forEach(id=>{const n=clone.querySelector("#"+id); if(n) n.textContent="";});
+  const blob=new Blob(["<!doctype html>"+clone.outerHTML],{type:"text/html"});
+  const link=document.createElement("a"); link.href=URL.createObjectURL(blob); link.download="K1716 Outpost Rotation.html";
+  document.body.appendChild(link); link.click(); link.remove(); setTimeout(()=>URL.revokeObjectURL(link.href),2000);
+  flash("cmsg","Downloaded. The new file has your data built in.");
+});
+
+$("reset").addEventListener("click",()=>{
+  const r=$("reset");
+  if(!r.dataset.armed){ r.dataset.armed="1"; r.textContent="Click again to reset"; setTimeout(()=>{delete r.dataset.armed; r.textContent="Reset to original";},4000); return; }
+  delete r.dataset.armed; r.textContent="Reset to original";
+  DATA=RAW.map(x=>x.slice()); edit=null; build(); persist(); renderTable(); flash("cmsg","Back to the data built into this file.");
 });
 
 // Example to show how it works
 $("x").value=327;$("y").value=327;$("holder").value="TRU";
 renderTable();
 </script>
+
 
 </body></html>
